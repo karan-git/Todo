@@ -10,7 +10,7 @@ module.exports = async (fastify, opt) => {
 
     const todoSchema = {
         body: {
-            type: 'array',
+            type: 'string',
             required: ['todoVar'],
             properties: {
                 todoVar: {
@@ -19,20 +19,11 @@ module.exports = async (fastify, opt) => {
             },
             additionalProperties: false
         },
-        response: {
-            200: {
-              type: 'array',
-              required: [ 'todoVar' ],
-              properties: {
-                todoVar: { type: 'string' }
-              },
-              additionalProperties: false
-            }
-          }
     };
 
     fastify.post('/',{schema: todoSchema}, async (request, reply) => {
-        todolist = request.body
+        // todolist = request.body
+        todolist.push(request.body)
         return reply.send({todolist})
     });
 

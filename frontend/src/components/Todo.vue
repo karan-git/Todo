@@ -65,8 +65,7 @@ export default {
     axios.get('http://127.0.0.1:3000/api/todo')
       .then(res => {
         this.isData = true
-        this.collectTodo = res.data.todolist
-        this.getTodo = this.collectTodo
+        this.getTodo = res.data.todolist
       })
       .catch(e => {
         console.log(e)
@@ -74,28 +73,28 @@ export default {
   },
   methods: {
     async handleSubmit() {
-      this.collectTodo.push(this.setVar)
       // console.log(this.collectTodo)
-      try{
-        let config = {
-          headers : {
-            'Content-Type' : 'application/json'
+      if(this.setVar !== ""){
+        try{
+          let config = {
+            headers : {
+              'Content-Type' : 'application/json'
+            }
+          }
+
+          // let todoVar = this.collectTodo
+          let todoVar = JSON.stringify(this.setVar)
+          let responsePost = await axios.post('http://127.0.0.1:3000/api/todo', todoVar, config )
+          let res = await responsePost.data
+          this.getTodo = res.todolist;
+          this.setVar = "";
+          }
+          catch(e){
+            console.log(e.response)
           }
         }
-
-        let todoVar = this.collectTodo
-
-        let responsePost = await axios.post('http://127.0.0.1:3000/api/todo', todoVar, config )
-        let res = await responsePost.data
-        // this.getTodo = res;
-        this.setVar = "";
-
-        let responseGet = await axios.get('http://127.0.0.1:3000/api/todo')
-        let resGet = responseGet.data
-        this.getTodo = resGet.todolist
-      }
-      catch(e){
-        console.log(e)
+      else{
+        alert("Please type something first..")
       }
     },
 
