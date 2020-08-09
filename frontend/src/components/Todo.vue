@@ -1,18 +1,24 @@
 <template>
   <main class="container">
+
     <div class="alert alert-secondary" role="alert" v-if="isClick">
       {{alertMsg}}
     </div>
+
     <div class="jumbotron jumbotron-fluid w-80">
       <div class="container">
         <h1 class="display-4 text-center">Todo List</h1>
       </div>
     </div>
+
     <section class="w-50 m-auto">
+
       <form @submit.prevent="handleSubmit()">
         <input class="form-control mb-4" type="text" placeholder="Type here and press enter.." v-model="setVar" />
       </form>
+
       <div v-if="isData">
+
         <div class="card shadow bg-danger text-white" v-if="getTodo.length == 0">
           <!-- <h5 class="card-header text-center"></h5> -->
           <div class="card-body">
@@ -20,6 +26,7 @@
             <p class="card-text">Type in above input field and press enter to add a todo card.</p>
           </div>
         </div>
+
         <div class="card shadow mb-2 bg-light" v-else v-for="(todo, i) in getTodo" :key="i">
           <h5 class="card-header text-center">Task {{i+1}}</h5>
           <div class="card-body d-flex justify-content-between">
@@ -31,7 +38,9 @@
             </div>
           </div>
         </div>
+
       </div>
+
     </section>
   </main>
 </template>
@@ -67,22 +76,27 @@ export default {
     async handleSubmit() {
       this.collectTodo.push(this.setVar)
       // console.log(this.collectTodo)
-
-      let config = {
-        headers : {
-          'Content-Type' : 'application/json'
+      try{
+        let config = {
+          headers : {
+            'Content-Type' : 'application/json'
+          }
         }
+
+        let todoVar = this.collectTodo
+
+        let responsePost = await axios.post('http://127.0.0.1:3000/api/todo', todoVar, config )
+        let res = await responsePost.data
+        // this.getTodo = res;
+        this.setVar = "";
+
+        let responseGet = await axios.get('http://127.0.0.1:3000/api/todo')
+        let resGet = responseGet.data
+        this.getTodo = resGet.todolist
       }
-
-      let todoVar = this.collectTodo
-      let responsePost = await axios.post('http://127.0.0.1:3000/api/todo', this.collectTodo, config )
-      let res = await responsePost.data
-      // this.getTodo = res;
-      this.setVar = "";
-
-      let responseGet = await axios.get('http://127.0.0.1:3000/api/todo')
-      let resGet = responseGet.data
-      this.getTodo = resGet.todolist
+      catch(e){
+        console.log(e)
+      }
     },
 
     async handleDelete(id) {
